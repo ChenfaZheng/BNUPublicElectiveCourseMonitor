@@ -1,4 +1,3 @@
-import os
 import sys
 import time
 from tqdm import trange
@@ -14,7 +13,6 @@ import rsa
 import getpass
 
 import requests
-import json
 from urllib.parse import quote
 import yaml
 
