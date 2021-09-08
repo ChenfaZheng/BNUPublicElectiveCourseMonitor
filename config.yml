@@ -1,0 +1,6 @@
+courses_to_select: [GRA20185631, GRA20038701, GRA20098651]
+server_chann_token: 'SCT68892T2oyjsFG8xlouknpOUYaL90XX'
+stop_when_found: False
+courses_to_stop_when_found: [GRA20038701, GRA20038701, GRA20098651]
+refresh_time_sep: 20
+number_of_refresh_times: 100
