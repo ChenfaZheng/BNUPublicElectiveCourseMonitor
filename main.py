@@ -1,8 +1,8 @@
-import sys
-import time
+from sys import exit
+from time import sleep
 from tqdm import trange
 
-import pandas as pd
+from pandas import DataFrame, option_context
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -12,9 +12,10 @@ from selenium.webdriver.common.keys import Keys
 import rsa
 import getpass
 
-import requests
+from requests import request
 from urllib.parse import quote
-import yaml
+from yaml import load
+from yaml import Loader
 
 
 class User():
@@ -50,7 +51,7 @@ def server_chann_send(courses_to_select: list, courses_selected: list, courses_a
     text_ava = map(lambda course: '[%s]%s 可选%d限选%d %s %s %s'%(course.id, course.name, course.nums[3], course.nums[0], course.rkjs, course.sksj, course.skdd), courses_ava)
     text_selected = map(lambda course: '[%s]%s 可选%d限选%d %s %s %s'%(course.id, course.name, course.nums[3], course.nums[0], course.rkjs, course.sksj, course.skdd), courses_selected)
     title = '%d门课程可选！'%ava_course_num
-    response = requests.request("POST", post_url.format(token, quote(title), 
+    response = request("POST", post_url.format(token, quote(title), 
                 quote('## 可选课程：\n\n- ' + '\n\n- '.join(text_ava) + '\n\n## 关注课程：\n\n- ' + '\n\n- '.join(texts_toselect) +'\n\n## 已选课程：\n\n- ' + '\n\n- '.join(text_selected))))
     print('发送状态：', response)
 
@@ -80,16 +81,16 @@ def show_course_info(courses: list, title: str):
         '可选人数'  :   map(lambda c: c.nums[3], courses)    ,
         '是否已选中':   map(lambda c: '是' if c.selected else '否', courses)
     }
-    df = pd.DataFrame(data=d)
+    df = DataFrame(data=d)
     print(title)
-    with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+    with option_context('display.max_rows', None, 'display.max_columns', None):
         print(df)
 
 
 def main():
     # init by config
     with open('./config.yml', 'r', encoding='utf-8') as config_file:
-        config_data = yaml.load(config_file, Loader=yaml.Loader)
+        config_data = load(config_file, Loader=Loader)
     courses_to_select = config_data['courses_to_select']
     server_chann_token = config_data['server_chann_token']
     stop_when_found = config_data['stop_when_found']
@@ -101,10 +102,10 @@ def main():
     if number_of_refresh_times == 1145141919810:
         while True:
             print('啊', end='')
-        sys.exit()  # 虽然没什么用
+        exit()  # 虽然没什么用
     if number_of_refresh_times <= 0:
         print('?')
-        sys.exit()
+        exit()
     # create user
     user = User('test')
     # open driver
@@ -139,7 +140,7 @@ def main():
             driver.find_element_by_xpath('//*[@id="goPageNo"]').send_keys('%d'%(i+1))
             driver.find_element_by_xpath('//*[@id="goPageNo"]').send_keys(Keys.RETURN)
             driver.implicitly_wait(5)
-            time.sleep(5)
+            sleep(5)
             total_page = int(driver.find_element_by_xpath('//*[@id="totalPage"]').text)
             row_in_this_page = len(driver.find_elements_by_xpath('/html/body/div[1]/table/tbody/tr'))
             for row in trange(row_in_this_page):
@@ -180,8 +181,8 @@ def main():
                 for course in courses_ava:
                     if course.id in courses_to_stop_when_found:
                         driver.close()
-                        sys.exit()
-        time.sleep(refresh_time_sep)
+                        exit()
+        sleep(refresh_time_sep)
     
     driver.close()
     pass 
