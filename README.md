@@ -52,3 +52,6 @@
 ## 推送示例
 
 ![](./example.jpg)
+
+## License
+本项目基于 [GLWTPL](https://github.com/me-shaon/GLWTPL)  (Good Luck With That Public License) 许可证开源。
